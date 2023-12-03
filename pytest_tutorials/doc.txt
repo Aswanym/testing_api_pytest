@@ -1,0 +1,31 @@
+About and Intial setup ------
+
+This project is to learn about pytest. 
+import pytest inside the virtual environment - (venv3)  and activate it.
+Either tests are written as class or function, the name should be as "test_*" or "*_test" to make the pytest
+understand that it's a test. 
+
+
+
+Selecting test by markers (tags) ------
+
+To each function or class assign a tag as a decorator or can specify a tag for an entire module
+To run test on a particular tag uses the command "pytest -m <tag_name>"
+This will only run the test under the given tag
+Running test using tags will give some warnings if the tags are not registed. 
+To register tags, create a file named "pytest.ini" in the root directory, and 
+Either register all the tags or specify to ignore the warnings related to 
+unregistered tags ie, "pytest.PytestUnknownMarkWarning"
+
+
+Setup (fixtures) ------
+To setup common things we can define a setup function and give the function decorator @pytest.fixture()
+And by defining scope of the fixture we can avoid creating the setup multiple times, as @pytest.fixture(scope='module')
+
+pytest html report ------
+install pytest-html
+pytest --html=report.html   -- This command will create report as the given name in the current root folder. along with the file an asset file will be created seperatly to keep all the css for this html
+pytest --html=report.html --self-contained-html  -- This command will create only a single html file which will have all the css within. 
+guide - https://pytest-html.readthedocs.io/en/latest/user_guide.html
+
+
