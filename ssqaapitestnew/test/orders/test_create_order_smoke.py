@@ -2,7 +2,7 @@ import pdb
 from ssqaapitestnew.src.dao.orders_dao import OrdersDAO
 from ssqaapitestnew.src.dao.products_dao import ProductDAO
 from ssqaapitestnew.src.helpers.order_helper import OrderHelper
-
+from ssqaapitestnew.src.helpers.customers_helper import CustomerHelper
 import pytest
 
 @pytest.mark.orders
@@ -14,40 +14,58 @@ def test_create_order_guest_user():
     rand_product = product_dao.get_random_product(1)
     product_id = rand_product[0]['ID']
 
-    # make the call
+    customer_id = 0
+
+    # To update the order creation json give product from our db.
     info = {
         "line_items": [
             {
                 "product_id": product_id,
                 "quantity": 1
             }
-        ]
+        ],
+        "customer_id": customer_id
     }
     order_helper = OrderHelper()
     order_json = order_helper.create_order(additional_args=info)
 
-    # verify response
-    assert order_json, f"Create order response is empty."
-    assert order_json['customer_id'] == 0, f"customer id for order created by guest user expected as 0," \
-                                           f"but got '{order_json['customer_id']}'"
-    assert len(order_json['line_items']) == 1, f"Expected only one item in the order but" \
-                                               f" got '{len(order_json['line_items'])}' " \
-                                               f"order_id '{order_json['id']}' " \
+    product_list = [{'product_id': product_id}]
+
+    # varify order created
+    order_helper.varify_order_created (order_json, customer_id, product_list)
 
 
-    # verify db
-    order_dao = OrdersDAO()
-    order_id = order_json['id']
-    line_info = order_dao.get_order_lines_by_order_id(order_id)
-    assert line_info, f"Create order, line item not created in db. order id : {order_id}"
+@pytest.mark.orders
+@pytest.mark.tcid49
+def test_create_paid_order_new_created_customer():
 
-    line_items = [info for info in line_info if info['order_item_type'] == 'line_item']
-    assert len(line_items) == 1, f"Expected one line item but found {len(line_items)}. order id {order_id}"
+    # get a product from db
+    product_dao = ProductDAO()
+    rand_product = product_dao.get_random_product(1)
+    product_id = rand_product[0]['ID']
 
-    line_item_id = line_items[0]['order_item_id']
-    item_details = order_dao.get_order_items_details(line_item_id)
-    db_product_id = item_details['_product_id']
+    # create a customer
+    cust_helper = CustomerHelper()
+    cust_info = cust_helper.create_customer()
+    customer_id = cust_info['id']
 
-    assert str(db_product_id) == str(product_id), f"Create order order 'product id ' is doesn't match with API. " \
-                                        f"API product id {product_id}, db product id {db_product_id}"
+    # create additional info to pass to the order json
+    info = {
+        "line_items": [
+            {
+                "product_id": product_id,
+                "quantity": 1
+            }
 
+        ],
+        "customer_id": customer_id
+    }
+
+    # create order
+    order_helper = OrderHelper()
+    order_json = order_helper.create_order(additional_args=info)
+
+    product_list = [{'product_id': product_id}]
+
+    # varify order created
+    order_helper.varify_order_created(order_json, customer_id, product_list)

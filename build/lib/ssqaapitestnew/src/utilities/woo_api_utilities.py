@@ -42,8 +42,5 @@ class WooApiUtility(object):
 
         return self.api_res_json
 
-if __name__ == '__main__':
-    obj = WooApiUtility()
-    rs_api = obj.get('products')
-    import pdb; pdb.set_trace ()
+
 

@@ -26,7 +26,6 @@ class TestGetProductsWithFilter(object):
         # make call
         product_rs_api = ProductHelper().call_list_products(payload=payload)
 
-        pdb.set_trace()
         # varify response is not empty
         assert product_rs_api, f"filter product with after param gives empty list in return." \
                                f"product filter with date {_after_created_date}"
