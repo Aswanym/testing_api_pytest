@@ -53,3 +53,12 @@ class OrderHelper(object):
             assert product['product_id'] in api_product_id, f"Created order doesn't have at least 1" \
                                                             f"expected product in db. product id : {product['product_id']} " \
                                                             f"order_id: {order_id}"
+
+    def call_update_order(self, order_id, payload):
+        rs_update = self.woo_api_utility.put(f"orders/{order_id}", payload)
+        return rs_update
+
+    def call_retrieve_an_order(self, order_id):
+        rs_api = self.woo_api_utility.get(f"orders/{order_id}")
+        return rs_api
+

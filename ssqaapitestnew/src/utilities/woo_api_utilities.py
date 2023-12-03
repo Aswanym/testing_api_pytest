@@ -60,4 +60,18 @@ class WooApiUtility(object):
 
         return self.api_res_json
 
+    def put(self, wc_endpoint, params=None, expected_status_code=200):
+        api_res = self.wcapi.put(wc_endpoint, data=params)
+
+        self.res_status_code = api_res.status_code
+        self.expected_status_code = expected_status_code
+        self.endpoint = wc_endpoint
+        self.api_res_json = api_res.json()
+
+        self.assert_status_code()
+
+        logger.info(f'GET Api response:{self.api_res_json}')
+
+        return self.api_res_json
+
 
