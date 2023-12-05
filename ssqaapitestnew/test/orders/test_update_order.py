@@ -1,5 +1,6 @@
 from ssqaapitestnew.src.helpers.order_helper import OrderHelper
 from ssqaapitestnew.src.utilities.woo_api_utilities import WooApiUtility
+from ssqaapitestnew.src.utilities.generic_utilities import generate_random_name
 import pdb
 import pytest
 
@@ -52,5 +53,24 @@ def test_update_order_status_to_random_string():
     assert rs_api['message'] == 'Invalid parameter(s): status', f"Updating an order with random string gives unexpected " \
                                                                 f"response message. expected message: rest_invalid_param" \
                                                                 f"actual message: {rs_api['message']}"
+
+@pytest.mark.tcid59
+def test_update_customer_note():
+
+    # create order
+    order_helper = OrderHelper()
+    rs_order = order_helper.create_order()
+    order_id = rs_order['id']
+
+    # create random string as customer note and update order customer note
+    customer_note = generate_random_name(50)
+    payload = {"customer_note": customer_note}
+    order_helper.call_update_order(order_id, payload)
+
+    # get the order info and validate
+    updated_order_info = order_helper.call_retrieve_an_order(order_id)
+    assert updated_order_info['customer_note'] == customer_note, f"Updated customer note to {customer_note}, but it didn't updated."
+
+
 
 

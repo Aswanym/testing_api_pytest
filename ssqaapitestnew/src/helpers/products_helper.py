@@ -1,9 +1,10 @@
 from ssqaapitestnew.src.utilities.request_utilities import RequestUtilitY
-
+from ssqaapitestnew.src.utilities.woo_api_utilities import WooApiUtility
 
 class ProductHelper (object):
     def __init__(self):
         self.pdt_helper = RequestUtilitY()
+        self.woo_api_utility = WooApiUtility()
 
     def get_product_by_id(self, product_id):
         res_api = self.pdt_helper.get(f'products/{product_id}')
@@ -35,3 +36,12 @@ class ProductHelper (object):
             raise Exception(f"Unable to find all products after {max_pages} pages.")
 
         return all_products
+
+    def call_update_product(self, product_id, payload):
+        rs_update = self.woo_api_utility.put(f"products/{product_id}", payload)
+        return rs_update
+
+    def call_retrieve_product(self, product_id):
+        rs_api = self.woo_api_utility.get(f"products/{product_id}")
+        return rs_api
+
